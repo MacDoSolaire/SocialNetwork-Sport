@@ -6,18 +6,11 @@ use App\Repository\MembreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Vich\UploaderBundle\Entity\File as EmbeddedFile;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=MembreRepository::class)
  * @ORM\Table(name="membre")
- *  * @Vich\Uploadable
- * @UniqueEntity(fields={"mail"}, message="There is already an account with this mail")
  */
 class Membre implements UserInterface
 {
@@ -70,69 +63,31 @@ class Membre implements UserInterface
     private $publication;
 
     /**
-     * @ORM\Embedded(class="Vich\UploaderBundle\Entity\File")
-     * @ORM\Column(type="blob", nullable=true)
+     * @ORM\ManyToMany(targetEntity=Evenement::class, inversedBy="membres")
      */
-    private  $avatar;
+    private $evenement;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Conversation::class, inversedBy="membres")
+     * @ORM\ManyToMany(targetEntity=MessagePrive::class, inversedBy="membres")
      */
-    private $conversations;
+    private $messagePrive;
 
     /**
-     * @ORM\OneToMany(targetEntity=MessagePrive::class, mappedBy="membre")
+     * @ORM\OneToMany(targetEntity=Amitie::class, mappedBy="membre")
      */
-    private $messagePrives;
+    private $amitie;
 
     /**
-     * @ORM\OneToMany(targetEntity=PublicationLike::class, mappedBy="membre")
+     * @ORM\Column(type="blob")
      */
-    private $likes;
-
-    /**
-     * @ORM\OneToMany(targetEntity=PublicationReply::class, mappedBy="membre")
-     */
-    private $replies;
-
-    /**
-     * @ORM\OneToMany(targetEntity=EvenementLike::class, mappedBy="membre")
-     */
-    private $likesEvenement;
-
-    /**
-     * @ORM\OneToMany(targetEntity=EvenementReply::class, mappedBy="membre")
-     */
-    private $repliesEvenement;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Evenement::class, mappedBy="membre")
-     */
-    private $evenements;
-
-    /**
-     * @ORM\OneToMany(targetEntity=ParticiperEvent::class, mappedBy="membre")
-     */
-    private $participations;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Activite::class, inversedBy="membres")
-     */
-    private $activites;
+    private $avatar;
 
     public function __construct()
     {
         $this->publication = new ArrayCollection();
         $this->evenement = new ArrayCollection();
-        $this->conversations = new ArrayCollection();
-        $this->messagePrives = new ArrayCollection();
-        $this->likes = new ArrayCollection();
-        $this->replies = new ArrayCollection();
-        $this->likesEvenement = new ArrayCollection();
-        $this->repliesEvenement = new ArrayCollection();
-        $this->evenements = new ArrayCollection();
-        $this->participations = new ArrayCollection();
-        $this->activites = new ArrayCollection();
+        $this->messagePrive = new ArrayCollection();
+        $this->amitie = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -294,6 +249,84 @@ class Membre implements UserInterface
         return $this;
     }
 
+    /**
+     * @return Collection|Evenement[]
+     */
+    public function getEvenement(): Collection
+    {
+        return $this->evenement;
+    }
+
+    public function addEvenement(Evenement $evenement): self
+    {
+        if (!$this->evenement->contains($evenement)) {
+            $this->evenement[] = $evenement;
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): self
+    {
+        $this->evenement->removeElement($evenement);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MessagePrive[]
+     */
+    public function getMessagePrive(): Collection
+    {
+        return $this->messagePrive;
+    }
+
+    public function addMessagePrive(MessagePrive $messagePrive): self
+    {
+        if (!$this->messagePrive->contains($messagePrive)) {
+            $this->messagePrive[] = $messagePrive;
+        }
+
+        return $this;
+    }
+
+    public function removeMessagePrive(MessagePrive $messagePrive): self
+    {
+        $this->messagePrive->removeElement($messagePrive);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Amitie[]
+     */
+    public function getAmitie(): Collection
+    {
+        return $this->amitie;
+    }
+
+    public function addAmitie(Amitie $amitie): self
+    {
+        if (!$this->amitie->contains($amitie)) {
+            $this->amitie[] = $amitie;
+            $amitie->setMembre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAmitie(Amitie $amitie): self
+    {
+        if ($this->amitie->removeElement($amitie)) {
+            // set the owning side to null (unless already changed)
+            if ($amitie->getMembre() === $this) {
+                $amitie->setMembre(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getAvatar()
     {
         return $this->avatar;
@@ -302,264 +335,6 @@ class Membre implements UserInterface
     public function setAvatar($avatar): self
     {
         $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Conversation[]
-     */
-    public function getConversations(): Collection
-    {
-        return $this->conversations;
-    }
-
-    public function addConversation(Conversation $conversation): self
-    {
-        if (!$this->conversations->contains($conversation)) {
-            $this->conversations[] = $conversation;
-        }
-
-        return $this;
-    }
-
-    public function removeConversation(Conversation $conversation): self
-    {
-        $this->conversations->removeElement($conversation);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|MessagePrive[]
-     */
-    public function getMessagePrives(): Collection
-    {
-        return $this->messagePrives;
-    }
-
-    public function addMessagePrife(MessagePrive $messagePrife): self
-    {
-        if (!$this->messagePrives->contains($messagePrife)) {
-            $this->messagePrives[] = $messagePrife;
-            $messagePrife->setMembre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMessagePrife(MessagePrive $messagePrife): self
-    {
-        if ($this->messagePrives->removeElement($messagePrife)) {
-            // set the owning side to null (unless already changed)
-            if ($messagePrife->getMembre() === $this) {
-                $messagePrife->setMembre(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PublicationLike[]
-     */
-    public function getLikes(): Collection
-    {
-        return $this->likes;
-    }
-
-    public function addLike(PublicationLike $like): self
-    {
-        if (!$this->likes->contains($like)) {
-            $this->likes[] = $like;
-            $like->setMembre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLike(PublicationLike $like): self
-    {
-        if ($this->likes->removeElement($like)) {
-            // set the owning side to null (unless already changed)
-            if ($like->getMembre() === $this) {
-                $like->setMembre(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PublicationReply[]
-     */
-    public function getReplies(): Collection
-    {
-        return $this->replies;
-    }
-
-    public function addReply(PublicationReply $reply): self
-    {
-        if (!$this->replies->contains($reply)) {
-            $this->replies[] = $reply;
-            $reply->setMembre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReply(PublicationReply $reply): self
-    {
-        if ($this->replies->removeElement($reply)) {
-            // set the owning side to null (unless already changed)
-            if ($reply->getMembre() === $this) {
-                $reply->setMembre(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|EvenementLike[]
-     */
-    public function getLikesEvenement(): Collection
-    {
-        return $this->likesEvenement;
-    }
-
-    public function addLikesEvenement(EvenementLike $likesEvenement): self
-    {
-        if (!$this->likesEvenement->contains($likesEvenement)) {
-            $this->likesEvenement[] = $likesEvenement;
-            $likesEvenement->setMembre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLikesEvenement(EvenementLike $likesEvenement): self
-    {
-        if ($this->likesEvenement->removeElement($likesEvenement)) {
-            // set the owning side to null (unless already changed)
-            if ($likesEvenement->getMembre() === $this) {
-                $likesEvenement->setMembre(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|EvenementReply[]
-     */
-    public function getRepliesEvenement(): Collection
-    {
-        return $this->repliesEvenement;
-    }
-
-    public function addRepliesEvenement(EvenementReply $repliesEvenement): self
-    {
-        if (!$this->repliesEvenement->contains($repliesEvenement)) {
-            $this->repliesEvenement[] = $repliesEvenement;
-            $repliesEvenement->setMembre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRepliesEvenement(EvenementReply $repliesEvenement): self
-    {
-        if ($this->repliesEvenement->removeElement($repliesEvenement)) {
-            // set the owning side to null (unless already changed)
-            if ($repliesEvenement->getMembre() === $this) {
-                $repliesEvenement->setMembre(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Evenement[]
-     */
-    public function getEvenements(): Collection
-    {
-        return $this->evenements;
-    }
-
-    public function addEvenement(Evenement $evenement): self
-    {
-        if (!$this->evenements->contains($evenement)) {
-            $this->evenements[] = $evenement;
-            $evenement->setMembre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEvenement(Evenement $evenement): self
-    {
-        if ($this->evenements->removeElement($evenement)) {
-            // set the owning side to null (unless already changed)
-            if ($evenement->getMembre() === $this) {
-                $evenement->setMembre(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|ParticiperEvent[]
-     */
-    public function getParticipations(): Collection
-    {
-        return $this->participations;
-    }
-
-    public function addParticipation(ParticiperEvent $participation): self
-    {
-        if (!$this->participations->contains($participation)) {
-            $this->participations[] = $participation;
-            $participation->setMembre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipation(ParticiperEvent $participation): self
-    {
-        if ($this->participations->removeElement($participation)) {
-            // set the owning side to null (unless already changed)
-            if ($participation->getMembre() === $this) {
-                $participation->setMembre(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Activite[]
-     */
-    public function getActivites(): Collection
-    {
-        return $this->activites;
-    }
-
-    public function addActivite(Activite $activite): self
-    {
-        if (!$this->activites->contains($activite)) {
-            $this->activites[] = $activite;
-        }
-
-        return $this;
-    }
-
-    public function removeActivite(Activite $activite): self
-    {
-        $this->activites->removeElement($activite);
 
         return $this;
     }

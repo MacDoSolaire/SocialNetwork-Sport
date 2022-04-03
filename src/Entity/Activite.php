@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ActiviteRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,20 +24,9 @@ class Activite
     private $nom;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Evenement::class, mappedBy="activites")
+     * @ORM\Column(type="text")
      */
-    private $evenements;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Membre::class, mappedBy="activites")
-     */
-    private $membres;
-
-    public function __construct()
-    {
-        $this->evenements = new ArrayCollection();
-        $this->membres = new ArrayCollection();
-    }
+    private $description;
 
     public function getId(): ?int
     {
@@ -58,56 +45,14 @@ class Activite
         return $this;
     }
 
-    /**
-     * @return Collection|Evenement[]
-     */
-    public function getEvenements(): Collection
+    public function getDescription(): ?string
     {
-        return $this->evenements;
+        return $this->description;
     }
 
-    public function addEvenement(Evenement $evenement): self
+    public function setDescription(string $description): self
     {
-        if (!$this->evenements->contains($evenement)) {
-            $this->evenements[] = $evenement;
-            $evenement->addActivite($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEvenement(Evenement $evenement): self
-    {
-        if ($this->evenements->removeElement($evenement)) {
-            $evenement->removeActivite($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Membre[]
-     */
-    public function getMembres(): Collection
-    {
-        return $this->membres;
-    }
-
-    public function addMembre(Membre $membre): self
-    {
-        if (!$this->membres->contains($membre)) {
-            $this->membres[] = $membre;
-            $membre->addActivite($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMembre(Membre $membre): self
-    {
-        if ($this->membres->removeElement($membre)) {
-            $membre->removeActivite($this);
-        }
+        $this->description = $description;
 
         return $this;
     }

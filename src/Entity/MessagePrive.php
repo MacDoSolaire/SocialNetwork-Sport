@@ -1,15 +1,14 @@
 <?php
-declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\MembreRepository;
+use App\Repository\MessagePriveRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=MembreRepository::class)
+ * @ORM\Entity(repositoryClass=MessagePriveRepository::class)
  * @ORM\Table(name="messagePrive")
  */
 class MessagePrive
@@ -22,35 +21,28 @@ class MessagePrive
     private $id;
 
     /**
-     * @ORM\Column(type="text")
-     */
-    private $message;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $date;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Conversation::class, inversedBy="messages")
+     * @ORM\Column(type="text")
      */
-    private $conversation;
+    private $message;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Membre::class, inversedBy="messagePrives")
+     * @ORM\ManyToMany(targetEntity=Membre::class, mappedBy="messagePrive")
      */
-    private $membre;
-    
-    public function getMessage(): ?string
+    private $membres;
+
+    public function __construct()
     {
-        return $this->message;
+        $this->membres = new ArrayCollection();
     }
 
-    public function setMessage(string $message): self
+    public function getId(): ?int
     {
-        $this->message = $message;
-
-        return $this;
+        return $this->id;
     }
 
     public function getDate(): ?\DateTimeInterface
@@ -65,32 +57,42 @@ class MessagePrive
         return $this;
     }
 
-    public function getConversation(): ?Conversation
+    public function getMessage(): ?string
     {
-        return $this->conversation;
+        return $this->message;
     }
 
-    public function setConversation(?Conversation $conversation): self
+    public function setMessage(string $message): self
     {
-        $this->conversation = $conversation;
+        $this->message = $message;
 
         return $this;
     }
 
-    public function getMembre(): ?Membre
+    /**
+     * @return Collection|Membre[]
+     */
+    public function getMembres(): Collection
     {
-        return $this->membre;
+        return $this->membres;
     }
 
-    public function setMembre(?Membre $membre): self
+    public function addMembre(Membre $membre): self
     {
-        $this->membre = $membre;
+        if (!$this->membres->contains($membre)) {
+            $this->membres[] = $membre;
+            $membre->addMessagePrive($this);
+        }
 
         return $this;
     }
 
-    public function getId(): ?int
+    public function removeMembre(Membre $membre): self
     {
-        return $this->id;
+        if ($this->membres->removeElement($membre)) {
+            $membre->removeMessagePrive($this);
+        }
+
+        return $this;
     }
 }

@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Accueil{% endblock %}
+{% block stylesheets %}
+    <link rel="preconnect" href="https://fonts.gstatic.com/%22%3E">
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <link href="css/accueil.css" type="text/css" rel="stylesheet" />
+
+
+{% endblock %}
+{% block body %}
+
+    <img class="box"src="{{asset('../image/box.png')}}" >
+    <div class="separation"></div>
+    <img class="tennis"src="{{asset('../image/tennis.png')}}" >
+    <form class="conteneur" method="post">
+        <p>Connectez-vous</p>
+        <input placeholder="Pseudo" class="pseudo" type="text" name="pseudo" />
+        <input placeholder="Mot de Passe" class="mdp" type="password" name="mdp" />
+        <a href="accueil/register" class="inscription"  type="submit" >Pas de compte ? Inscrivez vous !</a>
+        <button class="go" type="submit" >Go</button>
+
+    </form>
+{% endblock %}
