@@ -1,0 +1,19 @@
+{{ form_start(form)}}
+    {{ form_label(form.mail, "Mail :" ) }}
+    {{ form_widget(form.mail) }}
+    <br/>
+    {{ form_label(form.nom, "Nom :") }}
+    {{ form_widget(form.nom) }}
+<br/>
+    {{ form_label(form.prenom, "Prénom :" )}}
+    {{ form_widget(form.prenom) }}
+<br/>
+    {{ form_label(form.ville, "Ville :") }}
+    {{ form_widget(form.ville) }}
+<br/>
+    {{ form_label(form.cdPost, "Code Postal :") }}
+    {{ form_widget(form.cdPost) }}
+<br/>
+
+<input type="submit" value="Modifier">
+{{ form_end(form) }}

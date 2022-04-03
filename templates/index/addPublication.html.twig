@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Publication{% endblock %}
+
+{% block stylesheets %}
+    <link rel="preconnect" href="https://fonts.gstatic.com/%22%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <link  type="text/css" href="css/publication.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <h1>Ajouter une Publication</h1>
+    <div class="pub_form">
+        {% include "index/publication_form.html.twig" %}
+    </div>
+{% endblock %}

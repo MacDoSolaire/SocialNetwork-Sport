@@ -1,0 +1,156 @@
+body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #064753;
+    z-index: -9999;
+}
+
+.titre_recherche {
+    color: white;
+    font-family: 'Rubik Mono One';
+}
+#search_publication_Rechercher{
+    position: absolute;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: white;
+    background: #37B1C1;
+    border-radius: 50px;
+    border: 1px solid #064753;
+    outline: medium none;
+    padding: 15px;
+    text-decoration: none;
+    margin: 15px;
+
+}
+
+label {
+    margin: 15px;
+    font-size: 20px;
+    font-family: sans-serif;
+    color:whitesmoke;
+}
+
+#search_publication_Mot {
+    margin: 15px;
+    display: flex;
+    width: 15%;
+}
+.feed{
+    position: absolute;
+    left: 20%;
+    top: 25px;
+    background: rgba(205, 205, 205, 0.15) fixed;
+}
+
+.publier{
+    width: 1022px;
+    height: 185px;
+    left: 249px;
+    top: 0px;
+    background: #FCFCFC;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 25px;
+}
+
+.membre{
+    font-family: 'Rubik Mono One', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 25px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+    margin-left: 15px;
+}
+
+.date {
+    font-family: Roboto, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 10px;
+    line-height: 12px;
+    display: flex;
+    align-items: center;
+    color: #515151;
+    margin-left: 15px;
+}
+
+.message{
+    font-family: Roboto, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    color: black;
+    margin-left: 15px;
+}
+
+.navbar {
+    z-index: 9999;
+    background-color: white;
+    border-bottom: 10px solid #37B1C1;
+    width: 100%;
+    height: 7%;
+    margin-left: -5px; /* De la bidouille */
+    top: 0;
+    overflow: hidden;
+    position: fixed;
+}
+
+.btn-publi {
+    position: absolute;
+    color: white;
+    margin-top: 100px;
+    float: right;
+}
+
+.btn-feed {
+    font-family: sans-serif;
+    font-weight: bold;
+    color: white;
+    background: #064753;
+    border-radius: 50px;
+    border: 1px solid #064753;
+    outline: medium none;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.btn-msg {
+    position: absolute;
+    color: white;
+    margin-top: 150px;
+}
+
+.btn-profil{
+    float: right;
+    color: black;
+}
+
+.btn-event {
+    position: absolute;
+    color: white;
+    margin-top: 200px;
+}
+
+.comment {
+    float: right;
+    right: 50%;
+    position: absolute;
+    text-decoration: none;
+    color: #05728f;
+    font-size: 17px;
+}
+
+.js-like{
+    position: absolute;
+    left: 10%;
+    text-decoration: none;
+    font-size: 17px;
+    color: #05728f;
+}

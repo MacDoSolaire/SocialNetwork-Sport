@@ -1,0 +1,183 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Feed{% endblock %}
+{% block stylesheets %}
+    <link rel="preconnect" href="https://fonts.gstatic.com/%22%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <link href="css/feed_Privee.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+    <nav id="navbar" class="navbar">
+        <ul>
+            <a class="btn-feed" href="{{ path('index') }}"> Mode Public</a>
+            <a class ="btn-feed" href="{{ path('search_publication') }}">Rechercher</a>
+            {% if app.user %}
+                <a class="btn-feed" href="{{ path('app_logout') }}"> Deconnexion</a>
+            {% else %}
+                <a class="btn-feed" href="{{ path('app_login') }}"> Connexion</a>
+            {% endif %}
+            <a class="btn-profil" href="{{ path('profil', {'membreId': app.user.id}) }}"> <span class="iconify" data-inline="false" data-icon="vs:profile" style="font-size: 30px; margin-right: 7px;"></span> </a>
+        </ul>
+    </nav>
+    <a class="btn-publi" href="publication"> <i style="font-size: 50px; position: fixed; float: right; right: 7px; top: 92%;" class="fas fa-plus"></i> </a>
+
+    <a class="btn-msg" href="messages"> <i style="font-size: 50px;position: fixed;top: 92%;" class="fas fa-comment-alt"></i> </a>
+
+    <a class="btn-event" href="evenement"> <i style="font-size: 50px; position: fixed; float: right; right: 7px; top: 80%;" class="fas fa-calendar-alt"></i> </a>
+
+    <div class="feed">
+        {% for objet in tabPubliEvent %}
+            {% if class(objet) == "Evenement" %}
+                <!-- Boucle pour afficher les events -->
+                <div class="publier">
+                    <!-- Nom du membre -->
+                    <h3 class="membre">{{ objet.membre.prenom }} {{ objet.membre.nom }}</h3>
+
+                    <span class="activite"> Activités :
+                    {% for activite in objet.activites %}
+                        {{ activite.nom }}
+                    {% endfor %}
+                    </span>
+
+                    <!-- date -->
+                    <span class="dateEvent">Du {{ objet.dateDeb|date('d/m/Y H:i:s') }} au {{ objet.dateFin|date('d/m/Y H:i:s') }}</span>
+
+                    <span class="lieu"> Adresse : {{ objet.adresse }}</span>
+
+                    {% set difference = objet.dateFin.diff(objet.dateDeb) %}
+                    {% set leftDays = difference.days %}
+                    {% if leftDays <= 1 %}
+                        <span class="jour"> Durée : 1 Jour</span>
+                    {% else %}
+                        <span class="jour">Durée : {{ leftDays }} Jours</span>
+                    {% endif %}
+
+                    <!-- message -->
+                    <p class="message">{{ objet.message }}</p>
+
+                    <a  class="comment" href="{{ path('evenement_reply', {'evenementId': objet.id}) }}">
+                        <i class="far fa-comment"></i>
+                        <span class="js-replies"> {{ objet.replies | length }}</span>
+                    </a>
+
+                    <a href="{{ path('evenement_like', {'evenementId': objet.id}) }}" class="js-like">
+                        {% if app.user and objet.isLikedByMember(app.user) %}
+                            <i class="fas fa-heart"></i>
+                            <span class="js-likes"> {{ objet.evenementLikes | length }}</span>
+                            <span class="js-label"> Je n'aime plus</span>
+                        {% else %}
+                            <i class="far fa-heart"></i>
+                            <span class="js-likes"> {{ objet.evenementLikes | length }}</span>
+                            <span class="js-label"> J'aime</span>
+                        {% endif %}
+                    </a>
+
+                    <a class="js-join" href="{{ path('evenement_join', {'evenementId': objet.id}) }}">
+                        {% if app.user and objet.isMemberParticipating(app.user) %}
+                            <i class="fas fa-calendar-check"></i>
+                            <span class="js-joined"> {{ objet.participations | length }}</span>
+                            <span class="js-maxJoin"> / {{ objet.nbPers }}</span>
+                        {% else %}
+                            <i class="far fa-calendar-check"></i>
+                            <span class="js-joined"> {{ objet.participations | length }}</span>
+                            <span class="js-maxJoin"> / {{ objet.nbPers }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+            {% elseif class(objet) == "Publication" %}
+                <!-- Boucle pour afficher les publications -->
+                <div class="publier">
+                    <!-- Nom du membre -->
+                    <h3 class="membre">{{ objet.membre.prenom }} {{ objet.membre.nom }}</h3>
+
+                    <!-- date -->
+                    <span class="date">{{ objet.date|date('d/m/Y H:i:s') }}</span>
+
+                    <!-- message -->
+                    <p class="message">{{ objet.message }}</p>
+
+                    <a  class="comment" href="{{ path('publication_reply', {'publicationId': objet.id}) }}">
+                        <i class="far fa-comment"></i>
+                        <span class="js-replies"> {{ objet.replies | length }}</span>
+                    </a>
+
+                    <a href="{{ path('publication_like', {'publicationId': objet.id}) }}" class="js-like">
+                        {% if app.user and objet.isLikedByMember(app.user) %}
+                            <i class="fas fa-heart"></i>
+                            <span class="js-likes"> {{ objet.publicationLikes | length }}</span>
+                            <span class="js-label"> Je n'aime plus</span>
+                        {% else %}
+                            <i class="far fa-heart"></i>
+                            <span class="js-likes"> {{ objet.publicationLikes | length }}</span>
+                            <span class="js-label"> J'aime</span>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.querySelectorAll('a.js-like').forEach(function (link) {
+            link.addEventListener("click", onBtnLikeClick);
+        })
+
+        document.querySelectorAll('a.js-join').forEach(function (link) {
+            link.addEventListener("click", onBtnJoinClick);
+        })
+
+        function onBtnJoinClick(event) {
+            event.preventDefault();
+
+            const url = this.href;
+            const spanCount = this.querySelector('span.js-joined');
+            const icone = this.querySelector('i');
+
+            fetch(url, { method: 'Post' })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                })
+                .then(function (data){
+                    const spanCountContent = data.nbParticipation;
+                    if (spanCount.textContent !== spanCountContent) {
+                        spanCount.textContent = spanCountContent;
+                        if (icone.classList.contains('fas')) {
+                            icone.classList.replace('fas', 'far');
+                        } else {
+                            icone.classList.replace('far', 'fas');
+                        }
+                    } else {
+                        window.alert('Nombre maximum de participants atteint');
+                    }
+                });
+        }
+
+        function onBtnLikeClick(event) {
+            event.preventDefault();
+
+            const url = this.href;
+            const spanCount = this.querySelector('span.js-likes');
+            const spanText = this.querySelector('span.js-label');
+            const icone = this.querySelector('i');
+
+            fetch(url, { method: 'Post' })
+                .then(response => response.json())
+                .then(function (data){
+                    spanCount.textContent = data.nbLike;
+
+                    if (icone.classList.contains('fas')) {
+                        icone.classList.replace('fas', 'far');
+                        spanText.textContent = "J'aime";
+                    } else {
+                        icone.classList.replace('far', 'fas');
+                        spanText.textContent = "Je n'aime plus";
+                    }
+                });
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block stylesheets %}
+    <link rel="preconnect" href="https://fonts.gstatic.com/%22%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <link  type="text/css" href="\css/profil.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <i class="fa fa-arrow-left" aria-hidden="true" onclick="location.href = '/index'" style="font-size: 30px;"></i>
+        <a class="modifier" href="{{ path('profil_param')}}" ><i class="fas fa-cog" style="font-size: 30px;"></i> </a>
+        <div class="avatar">
+            <img src="{{asset('../image/boss.jpg')}}" height="40%" width="40%" >
+            <br>
+            <span class="nom_profil">{{ utilisateur.nom }} {{ utilisateur.prenom }}</span>
+        </div>
+        <div class="btns">
+            <a class="publi" href="{{ path('profil_publication', {'membreId': utilisateur.id})}}">Publication</a>
+            <a class="ami" href="profil_ami">Amis</a>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+{% block stylesheets %}
+    <link rel="preconnect" href="https://fonts.gstatic.com/%22%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <link href="css/registration.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+{% block body %}
+    {% for flashError in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
+
+
+
+    <img class="tennis"src="{{asset('../image/tennis.png')}}" >
+    <div class="separation"></div>
+    <img class="box"src="{{asset('../image/box.png')}}" >
+    <p>Enregistrement</p>
+    {{ form_start(registrationForm) }}
+    <div class="conteneur">
+        <a class="mail">    {{ form_row(registrationForm.mail) }} </a>
+        <a class="mdp"> {{ form_row(registrationForm.plainPassword, {label: 'Mot de Passe'}) }} </a>
+        <a class="nom">{{ form_row(registrationForm.nom, {label: 'Nom '}) }}</a>
+        <a class="prnm">{{ form_row(registrationForm.prenom) }}</a>
+        <a class="ville">{{ form_row(registrationForm.ville) }}</a>
+        <a class="cp">{{ form_row(registrationForm.cdPost,{label:'Code Postal'}) }}</a>
+        <a class="termes">{{ form_row(registrationForm.agreeTerms,{label: 'Termes et Conditions'}) }}</a>
+        <button type="submit" class="create">Créer votre compte</button>
+    </div>
+    {{ form_end(registrationForm,) }}
+{% endblock %}

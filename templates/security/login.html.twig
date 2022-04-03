@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+{% block stylesheets %}
+    <link rel="preconnect" href="https://fonts.gstatic.com/%22%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <link href="css/accueil.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+{% block body %}
+<form method="post" class="conteneur">
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="msg-alerte">
+            You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+    {% endif %}
+
+    <img class="box"src="{{asset('../image/box.png')}}" >
+    <div class="separation"></div>
+    <img class="tennis"src="{{asset('../image/tennis.png')}}" >
+
+    <p class="titre">Connectez-vous</p>
+    <input type="text" value="{{ last_username }}" name="mail" id="inputMail" placeholder="Mail" class="mail" required autofocus>
+    <input type="password" name="password" id="inputPassword" class="mdp" placeholder="Mot de Passe" required>
+    <a href="register" class="inscription"  type="submit" >Pas de compte ? Inscrivez vous !</a>
+
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+    {#
+        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+        See https://symfony.com/doc/current/security/remember_me.html
+
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" name="_remember_me"> Remember me
+            </label>
+        </div>
+    #}
+
+    <button class="go" type="submit">
+        GO
+    </button>
+</form>
+{% endblock %}

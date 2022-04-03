@@ -1,0 +1,43 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Messages{% endblock %}
+{% block stylesheets %}
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="\css/messages.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="top">
+            <i class="fa fa-arrow-left" aria-hidden="true" onclick="location.href = '/messages'"></i>
+            <h3>{{ conversation.titre }}</h3>
+        </div>
+
+        <div class="chat">
+            {% for message in conversation.messages %}
+                {% if message.membre.id == app.user.id %}
+                    <div class="message" style="background: rgba(55, 177, 193, 0.5); margin-left: 40%">
+                        {{ message.message }}
+                    </div>
+                {% else %}
+                    <div class="message">
+                        {{ message.message }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="delimiter"></div>
+
+        {{ form_start(msgForm, {'attr': {'class': 'row'}}) }}
+        <div class="bottomBar">
+            <div class="msgPubli">
+                {{ form_widget(msgForm.message, {'attr': { 'placeholder': 'Démarrer un nouveau message'}}) }}
+                <span class="error">{{ form_errors(msgForm.message) }}</span>
+            </div>
+
+            <input type="submit" name="" value="Envoyer" >
+        </div>
+        {{ form_end(msgForm) }}
+    </div>
+{% endblock %}
